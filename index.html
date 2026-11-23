@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecionando...</title>
+    
+    <!-- 1. Fallback via HTML: redireciona após 0 segundos caso o JS esteja desativado -->
+    <meta http-equiv="refresh" content="0; url=./enganagui/index.html">
+    
+    <!-- 2. Redirecionamento principal via JavaScript (imediato) -->
+    <script>
+        window.location.replace("./enganagui/index.html");
+    </script>
+</head>
+<body>
+    <!-- 3. Link manual caso o navegador bloqueie o redirecionamento automático -->
+    <p>Se você não for redirecionado automaticamente, <a href="./enganagui/index.html">clique aqui</a>.</p>
+</body>
+</html>
