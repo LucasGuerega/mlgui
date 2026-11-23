@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leitura Tranquila...</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0d0f14;
+      color: #e6e9ef;
+      font-family: system-ui, -apple-system, sans-serif;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #pagina-normal {
+      max-width: 520px;
+      padding: 32px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    #pagina-normal h1 {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+
+    #pagina-normal p {
+      color: #a3abb8;
+      font-size: 1rem;
+    }
+
+    /* Camada do Jumpscare */
+    #jumpscare-layer {
+      position: fixed;
+      inset: 0;
+      background-color: #000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    #jumpscare-layer.ativo {
+      display: flex;
+      animation: tremer 0.08s infinite alternate, flashFundo 0.12s infinite;
+    }
+
+    #jumpscare-img {
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1);
+      transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #jumpscare-layer.ativo #jumpscare-img {
+      transform: scale(1.18);
+    }
+
+    @keyframes tremer {
+      0%   { transform: translate(-14px, 10px) rotate(-2deg); }
+      25%  { transform: translate(16px, -12px) rotate(2deg); }
+      50%  { transform: translate(-12px, -14px) rotate(-1.5deg); }
+      75%  { transform: translate(14px, 12px) rotate(1.5deg); }
+      100% { transform: translate(-10px, 8px) rotate(-2deg); }
+    }
+
+    @keyframes flashFundo {
+      0%   { filter: contrast(1.2) brightness(1); }
+      50%  { filter: contrast(2.2) brightness(1.45); }
+      100% { filter: contrast(1.4) brightness(0.85); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="pagina-normal">
+    <h1>Observa bem os detalhes...</h1>
+    <p>Fica atento ao ecrã durante os próximos segundos. Algo pode mudar sem aviso.</p>
+  </div>
+
+  <div id="jumpscare-layer">
+    <img id="jumpscare-img" src="8b2ebc26-af8d-4728-a36b-c8e946cb4a63.jpg" alt="Jumpscare">
+  </div>
+
+  <script>
+    const TEMPO_ESPERA = 5000; // 25 segundos
+    const layer = document.getElementById('jumpscare-layer');
+    const img = document.getElementById('jumpscare-img');
+
+    // Pré-carrega a imagem
+    const preload = new Image();
+    preload.src = img.src;
+
+    // Gera um som estridente curto usando Web Audio API (se o navegador permitir sem interação)
+    function tocarSomSusto() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc1.type = 'sawtooth';
+        osc2.type = 'square';
+
+        osc1.frequency.setValueAtTime(190, ctx.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(920, ctx.currentTime + 0.12);
+        osc1.frequency.exponentialRampToValueAtTime(240, ctx.currentTime + 1.4);
+
+        osc2.frequency.setValueAtTime(310, ctx.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(1240, ctx.currentTime + 0.1);
+        osc2.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 1.4);
+
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc1.start();
+        osc2.start();
+        osc1.stop(ctx.currentTime + 1.5);
+        osc2.stop(ctx.currentTime + 1.5);
+      } catch (e) {
+        // Navegadores modernos podem bloquear áudio automático sem clique prévio
+      }
+    }
+
+    function dispararJumpscare() {
+      layer.classList.add('ativo');
+      tocarSomSusto();
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(dispararJumpscare, TEMPO_ESPERA);
+    });
+  </script>
+
+</body>
+</html>
